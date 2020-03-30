@@ -64,9 +64,7 @@ jobs:
             export ARCH=arm64
             export SUBARCH=arm64
             export CROSS_COMPILE=/home/builder/kernel/arm64/bin/aarch64-linux-android-
-            make O=out clean
-            make O=out mrproper
-            make O=out rosy-baunil_defconfig 2>&1 > /tmp/log.txt
+            make O=out rosy-perf_defconfig 2>&1 > /tmp/log.txt
             make O=out -j$(nproc --all) 2>&1 > /tmp/log.txt
             cd /
             git clone ${ANY_KERNEL3} zip --depth=1
@@ -84,12 +82,7 @@ jobs:
       - run:
           name: Release all built files
           command: |
-            if [[ ! -z ${GITHUB_TOKEN} ]]; then
-              du -sh release/*
-              ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -n "PREDATOR $(echo $VER)" -b "Latest Release for $(echo $CODENAME)" -c ${CIRCLE_SHA1} release/
-            else
-              echo -e "\n Files not uploaded due to absent of GITHUB_TOKEN as env variable"
-            fi
+          curl -F document=@release/*.zip https://api.telegram.org/bot835531831:AAFe0klshiqGzbWjJvnKrQfyxMRz-hRirL4/sendDocument?chat_id=-1001478864606
 
 workflows:
   version: 2
